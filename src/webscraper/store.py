@@ -95,6 +95,36 @@ def save_snapshot(conn: sqlite3.Connection, snapshot: PriceSnapshot) -> int:
     return cursor.lastrowid
 
 
+def get_snapshots_with_target_name(
+    conn: sqlite3.Connection, target_id: int | None = None
+) -> list[dict]:
+    """Snapshots joined with their target's name, for export (LEFT JOIN keeps
+    snapshots whose target was later deleted — domain.md: history outlives the target).
+    """
+    query = (
+        "SELECT s.target_id, t.name, s.timestamp, s.raw_price, s.price, s.currency, s.in_stock "
+        "FROM snapshots s LEFT JOIN targets t ON t.id = s.target_id"
+    )
+    params: tuple = ()
+    if target_id is not None:
+        query += " WHERE s.target_id = ?"
+        params = (target_id,)
+    query += " ORDER BY s.timestamp ASC"
+
+    rows = conn.execute(query, params).fetchall()
+    return [
+        {
+            "target_name": row[1] if row[1] is not None else f"(silinmiş hedef {row[0]})",
+            "timestamp": datetime.fromisoformat(row[2]),
+            "raw_price": row[3],
+            "price": Decimal(row[4]) if row[4] is not None else None,
+            "currency": row[5],
+            "in_stock": None if row[6] is None else bool(row[6]),
+        }
+        for row in rows
+    ]
+
+
 def get_history(conn: sqlite3.Connection, target_id: int) -> list[PriceSnapshot]:
     rows = conn.execute(
         "SELECT id, target_id, timestamp, raw_price, price, currency, in_stock "
