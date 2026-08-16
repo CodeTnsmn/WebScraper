@@ -1,0 +1,20 @@
+# Agent kuralları — bilinçli olarak private/local tutulur
+AGENTS.md
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Proje verisi
+*.db
+output/
+.env
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
