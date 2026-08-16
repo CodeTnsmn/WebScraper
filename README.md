@@ -28,5 +28,12 @@ pip install -r requirements.txt
 python -m webscraper.cli --help
 ```
 
+## Panel (opsiyonel)
+Fiyat trendi ve rakip karşılaştırma görselleştirmesi:
+```bash
+streamlit run dashboard/app.py
+```
+Farklı bir veritabanı dosyası kullanmak için `WEBSCRAPER_DB` ortam değişkenini ayarlayın.
+
 ## Durum
 Proje iskelet aşamasında. Spec'ler `specs/` altında ilerledikçe eklenecek.
