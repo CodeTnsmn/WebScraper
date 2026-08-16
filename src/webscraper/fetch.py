@@ -26,6 +26,11 @@ def fetch_html(url: str, *, session: requests.Session | None = None) -> str:
 
         if response.status_code != 200:
             raise FetchError(f"{url} returned HTTP {response.status_code}")
+        if "charset" not in response.headers.get("Content-Type", "").lower():
+            # No declared charset: requests falls back to ISO-8859-1 per RFC 2616,
+            # which mangles non-ASCII (e.g. "£" -> "Â£") on pages that are actually
+            # UTF-8 but don't say so. Sniff instead when the server didn't declare it.
+            response.encoding = response.apparent_encoding
         return response.text
 
     raise FetchError(f"Failed to fetch {url} after {config.MAX_RETRIES} attempts: {last_error}")

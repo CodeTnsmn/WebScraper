@@ -35,5 +35,15 @@ streamlit run dashboard/app.py
 ```
 Farklı bir veritabanı dosyası kullanmak için `WEBSCRAPER_DB` ortam değişkenini ayarlayın.
 
+## Canlı örnek
+Gerçek bir siteye karşı uçtan uca çalışan, ağ isteği atan bir örnek:
+```bash
+python examples/books_toscrape_demo.py
+```
+Hedef: [books.toscrape.com](https://books.toscrape.com) — scraping pratiği için
+hazırlanmış, herkese açık, robots.txt/ToS riski taşımayan bir demo mağaza. Gerçek ağ
+isteği attığı için `pytest` suite'inin bir parçası değildir (bkz. `docs/testing.md`).
+
 ## Durum
-Proje iskelet aşamasında. Spec'ler `specs/` altında ilerledikçe eklenecek.
+Spec 0001-0008 tamamlandı (veri çıkarma, otomatik toplama, temizleme, export,
+zamanlama, CLI, panel, canlı örnek). Detaylar `specs/` altında.

@@ -64,4 +64,12 @@ Bkz. `docs/architecture.md` — `fetch` ve `parse`/site-adaptör modülleri. ADR
 | Kaçan hata (sonradan bulunan) | 0 |
 
 ## Revizyon Notları
-Yok.
+- 2026-08-16: Spec 0008 (canlı örnek) sırasında gerçek siteye (books.toscrape.com)
+  karşı çalıştırılınca AP-01 bulgusu çıktı: `fetch_html`, charset'i header'da
+  deklare etmeyen sunucularda `response.text`'i yanlış (ISO-8859-1) çözüyordu,
+  "£" gibi karakterler "Â£" olarak bozuluyordu (mojibake). Kök neden: `requests`
+  charset deklare edilmemişse RFC 2616 gereği ISO-8859-1'e varsayılan düşüyor.
+  Düzeltme: `fetch.py`'de Content-Type'ta charset yoksa `response.apparent_encoding`
+  ile sniff ediliyor. Regresyon testi: `test_fetch_html_sniffs_encoding_when_server_omits_charset`.
+  AC'ler değişmedi, davranış genişletildi (bkz. AC-1'in "doğru çıkarılır" ifadesi
+  artık niyet ettiği gibi non-ASCII karakterleri de kapsıyor).

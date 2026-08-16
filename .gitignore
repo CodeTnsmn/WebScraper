@@ -12,6 +12,7 @@ __pycache__/
 *.db
 output/
 .env
+examples/*.csv
 
 # Editor/OS
 .vscode/

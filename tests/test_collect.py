@@ -17,9 +17,13 @@ def _target(id_, url="http://example.test/product"):
     )
 
 
+def _http_response(text):
+    return Mock(status_code=200, text=text, headers={"Content-Type": "text/html; charset=utf-8"})
+
+
 def _ok_session(html):
     session = Mock()
-    session.get.return_value = Mock(status_code=200, text=html)
+    session.get.return_value = _http_response(html)
     return session
 
 
@@ -80,8 +84,8 @@ def test_collect_all_continues_after_one_target_fails_ac3(monkeypatch):
 
     def fake_get(url, headers, timeout):
         if url.endswith("/bad"):
-            return Mock(status_code=200, text="<html><body>nothing</body></html>")
-        return Mock(status_code=200, text=GOOD_HTML)
+            return _http_response("<html><body>nothing</body></html>")
+        return _http_response(GOOD_HTML)
 
     session.get.side_effect = fake_get
     sleep_calls = []
