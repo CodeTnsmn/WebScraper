@@ -1,3 +1,4 @@
+from decimal import Decimal
 from unittest.mock import Mock
 
 from webscraper import store
@@ -39,6 +40,7 @@ def test_collect_target_saves_snapshot_on_success_ac2():
     history = store.get_history(conn, target_id)
     assert len(history) == 1
     assert history[0].raw_price == "100 TL"
+    assert history[0].price == Decimal("100")
 
 
 def test_collect_target_no_snapshot_on_parse_failure_ac3():
@@ -48,6 +50,21 @@ def test_collect_target_no_snapshot_on_parse_failure_ac3():
     session = _ok_session("<html><body>no product here</body></html>")
 
     result = collect_target(conn, target, session=session)
+
+    assert result.status == "failed"
+    assert store.get_history(conn, target_id) == []
+
+
+def test_collect_target_no_snapshot_on_clean_failure_ac6():
+    conn = store.connect(":memory:")
+    target_id = store.add_target(conn, _target(None))
+    target = _target(target_id)
+    html = (
+        "<html><body><h1 class='product-title'>Ürün</h1>"
+        "<span class='product-price'>Fiyat için tıklayın</span></body></html>"
+    )
+
+    result = collect_target(conn, target, session=_ok_session(html))
 
     assert result.status == "failed"
     assert store.get_history(conn, target_id) == []

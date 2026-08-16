@@ -8,3 +8,7 @@ class FetchError(WebScraperError):
 
 class ParseError(WebScraperError):
     """Raised when required data could not be extracted from downloaded HTML."""
+
+
+class CleanError(WebScraperError):
+    """Raised when a raw price string cannot be normalized to a Decimal."""

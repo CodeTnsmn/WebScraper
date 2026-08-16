@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import requests
 
 from webscraper import config, store
+from webscraper.clean import clean_price
 from webscraper.exceptions import WebScraperError
 from webscraper.fetch import fetch_html
 from webscraper.models import PriceSnapshot, Target
@@ -38,6 +39,7 @@ def collect_target(
     try:
         html = fetch_html(target.url, session=session)
         parsed = _adapter_for(target).parse(html)
+        price = clean_price(parsed.raw_price)
     except WebScraperError as exc:
         return CollectResult(target_id=target.id, status="failed", error=str(exc))
 
@@ -45,6 +47,7 @@ def collect_target(
         target_id=target.id,
         timestamp=datetime.now(timezone.utc),
         raw_price=parsed.raw_price,
+        price=price,
         currency=parsed.currency,
         in_stock=parsed.in_stock,
     )
